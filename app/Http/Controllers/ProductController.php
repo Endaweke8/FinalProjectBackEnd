@@ -19,7 +19,7 @@ class ProductController extends Controller
        
        
       try{
-        $productsPerPage = 6;
+        $productsPerPage = 8;
         $product = Product::orderBy('updated_at', 'desc')
             ->simplePaginate($productsPerPage);
             $pageCount = count(Product::all()) / $productsPerPage;
@@ -39,6 +39,8 @@ class ProductController extends Controller
 
 
 
+     
+
 
         // $products=Product::all();
         // return response()->json(
@@ -47,6 +49,49 @@ class ProductController extends Controller
         //     ],200
         // );
        }
+
+
+       public function searchProduct(Request $request){
+
+        
+        if($request->searchData){
+            $productsPerPage = 3;
+            $searchProducts=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
+            ->orWhere('category','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('sale_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('slug','LIKE','%'.$request->searchData.'%')
+            ->get();
+
+            $searchProductsCount=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
+            ->orWhere('category','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('sale_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('slug','LIKE','%'.$request->searchData.'%')
+            ->simplePaginate($productsPerPage);;
+
+
+            $pageCount = count($searchProducts) / $productsPerPage;
+
+
+
+
+            return response()->json([
+                'products' =>  $searchProductsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'error'=>'No search found',
+            ]);
+        }
+       }
+
 
        public function AllProducts(){
           $products=Product::with('likes')->with('stars')->get();
