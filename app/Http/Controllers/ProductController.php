@@ -75,6 +75,8 @@ class ProductController extends Controller
             ->simplePaginate($productsPerPage);;
 
 
+
+
             $pageCount = count($searchProducts) / $productsPerPage;
 
 
