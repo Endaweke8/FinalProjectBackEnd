@@ -41,13 +41,6 @@ class ProductController extends Controller
 
      
 
-
-        // $products=Product::all();
-        // return response()->json(
-        //     [
-        //         'products'=>$products
-        //     ],200
-        // );
        }
 
 
@@ -72,7 +65,7 @@ class ProductController extends Controller
             ->orWhere('sale_price','LIKE','%'.$request->searchData.'%')
             ->orWhere('price','LIKE','%'.$request->searchData.'%')
             ->orWhere('slug','LIKE','%'.$request->searchData.'%')
-            ->simplePaginate($productsPerPage);;
+            ->simplePaginate($productsPerPage);
 
 
 
@@ -118,17 +111,142 @@ class ProductController extends Controller
        }
 
 
+    //    public function LaptopComputers(){
+       
+       
+       
+    //     $products=Product::where('subcategory1','Laptop')->get();
+    //     return response()->json(
+    //         [
+    //             'products'=>$products
+    //         ],200
+    //     );
+    //    }
+
+
+
+
        public function LaptopComputers(){
        
-       
-       
-        $products=Product::where('subcategory1','Laptop')->get();
-        return response()->json(
-            [
-                'products'=>$products
-            ],200
-        );
+        try{
+            $productsPerPage = 4;
+            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop')->get();       
+            $laptopComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($laptopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $laptopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.DesktopComputers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
        }
+
+       public function DesktopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Desktop')->get();       
+            $desktopComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Desktop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($desktopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $desktopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.DesktopComputers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+
+       public function IphoneMobiles(){
+       
+        try{
+            $productsPerPage = 4;
+            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Iphone')->get();       
+            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Iphone') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($mobileComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $mobileComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.Mobiles',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+       public function AndroidMobiles(){
+       
+        try{
+            $productsPerPage = 4;
+            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Android')->get();       
+            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Android') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($mobileComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $mobileComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.AndroidMobiles',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+       public function ButtonMobiles(){
+       
+        try{
+            $productsPerPage = 4;
+            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Button')->get();       
+            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Button') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($mobileComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $mobileComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.ButtonMobiles',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
 
        public function Clothes(){
        
