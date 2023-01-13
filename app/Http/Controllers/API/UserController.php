@@ -61,6 +61,20 @@ class UserController extends Controller
             ], 400);
         }
     }
+    public function showadminuser(int $id)
+    {
+        try {
+            $user = User::where('id',$id)->where('role','admin')->first();;
+
+            return response()->json(['user' => $user], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in UserController.showadminuser',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
     /**
      * Show the form for editing the specified resource.

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Processing;
+use Stripe;
 use App\Models\Cart;
 use App\Models\User;
-use Stripe;
+use App\Models\Product;
+use App\Models\Processing;
+use Illuminate\Http\Request;
+use App\Notifications\ProductNotification;
+use Illuminate\Support\Facades\Notification;
+
 class CartsController extends Controller
 {
     /**
@@ -405,6 +408,11 @@ class CartsController extends Controller
           ]);
 
           if($processingDetails){
+            $user=User::first();
+            $message="Orders Product";
+            Notification::send($user,new ProductNotification($firstName,$message));
+          
+
             Cart::where('user_id',$user->id)->delete();
 
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\StudenttController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::get('users/{id}', [\App\Http\Controllers\API\UserController::class, 'show']);
     Route::put('users/{id}', [\App\Http\Controllers\API\UserController::class, 'update']);
-
+    Route::get('user/{id}', [\App\Http\Controllers\API\UserController::class, 'showadminuser']);
 
 
     Route::post('songs', [\App\Http\Controllers\API\SongController::class, 'store']);
@@ -80,6 +81,12 @@ Route::get('/products/electronics/desktopcomputers',[ProductController::class,'D
 Route::get('/products/electronics/mobiles/iphones',[ProductController::class,'IphoneMobiles']);
 Route::get('/products/electronics/mobiles/androids',[ProductController::class,'AndroidMobiles']);
 Route::get('/products/electronics/mobiles/buttons',[ProductController::class,'ButtonMobiles']);
+
+
+
+Route::get('/products/clothes/mens/trousers',[ProductController::class,'MensTrousers']);
+Route::get('/products/clothes/mens/tshirts',[ProductController::class,'MensTshirts']);
+Route::get('/products/clothes/mens/jackets',[ProductController::class,'MensJackets']);
 Route::get('/products/clothes',[ProductController::class,'Clothes']);
 Route::get('product/{id}',[ProductController::class,'show']);
 Route::put('product/{id}', [ProductController::class, 'update']);
@@ -107,7 +114,8 @@ Route::delete('bookmark/{id}', [BookmarkController::class, 'destroy']);
 Route::get('/get_all_users',[UserController::class,'get_all_users']);
 Route::get('/get_all_products',[AdminProductController::class,'get_all_products']);
 
-
+Route::get('/notifications',[NotificationController::class,'index']);
+Route::put('/notification/{id}', [NotificationController::class, 'update']);
 
 Route::post('/saveLike',[LikeController::class,'saveLike']);
 

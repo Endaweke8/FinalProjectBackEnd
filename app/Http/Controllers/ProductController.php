@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Services\ImageService;
+use App\Notifications\ProductNotification;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Product\StoreProductRequest;
 
 class ProductController extends Controller
@@ -247,6 +250,78 @@ class ProductController extends Controller
                 
        }
 
+       public function MensTrousers(){
+       
+        try{
+            $productsPerPage = 4;
+            $menTrouser = Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTrouser')->get();       
+            $menTrousersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTrouser') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($menTrouser) / $productsPerPage;
+
+            return response()->json([
+                'products' => $menTrousersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.MenTrousers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+       public function MensTshirts(){
+       
+        try{
+            $productsPerPage = 4;
+            $menTshirt = Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTshirt')->get();       
+            $menTshirtsCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTshirt') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($menTshirt) / $productsPerPage;
+
+            return response()->json([
+                'products' => $menTshirtsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.MenTshirts',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+       public function MensJackets(){
+       
+        try{
+            $productsPerPage = 4;
+            $menJacket = Product::orderBy('updated_at', 'desc')->where('subcategory1','MenJacket')->get();       
+            $menJacketsCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','MenJacket') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($menJacket) / $productsPerPage;
+
+            return response()->json([
+                'products' => $menJacketsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.MenTshirts',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
 
        public function Clothes(){
        
@@ -347,6 +422,7 @@ class ProductController extends Controller
     //  }
     public function store(Request $request)
     {
+        $user=User::first();
         $product=Product::create([
             'name'=>$request['name'],
             'category'=>$request['category'],
@@ -358,9 +434,10 @@ class ProductController extends Controller
             'price'=>$request['price'],
             'sale_price'=>$request['sale_price']
             
-
+           
             
         ]);
+        Notification::send($user,new ProductNotification($request->name));
         return response([
             'product'=>$product,
         ]);

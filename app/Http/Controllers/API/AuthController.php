@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
+use App\Notifications\ProductNotification;
 use App\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Support\Facades\Notification;
 
 class AuthController extends Controller
 {
@@ -24,6 +26,9 @@ class AuthController extends Controller
             ]);
 
             $token = $user->createToken('user_token')->plainTextToken;
+            $user=User::first();
+            $message=$request->input('first_name')." Registered";
+            Notification::send($user,new ProductNotification( $request->input('first_name'),$message));
 
             return response()->json([ 'user' => $user, 'token' => $token ], 200);
 
