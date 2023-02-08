@@ -217,7 +217,29 @@ class CartsController extends Controller
             // ],200)
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Something went wrong in PostController.show',
+                'message' => 'Something went wrong in CartController.show',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function getCart(int $id)
+    {
+        try {
+           
+            $quant=Cart::where('product_id',$id)->sum('quantity');
+
+      return response()->json(
+    [
+      'cartQuantity'=>$quant,
+    ]
+    ,200
+    );
+
+   
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in CartController.getCart',
                 'error' => $e->getMessage()
             ], 400);
         }

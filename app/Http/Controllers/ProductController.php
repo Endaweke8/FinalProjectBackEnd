@@ -17,13 +17,40 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * 
      */
+
+     public function ShowAllProductsForSlide(){
+       
+       
+        try{
+          
+          $product = Product::orderBy('updated_at', 'desc')->get();
+           
+          return response()->json([
+              'products' => $product,
+             
+          ], 200);
+        }
+  
+      catch (\Exception $e) {
+          return response()->json([
+              'message' => 'Something went wrong in ProductController.ShowAllProductsForSlide',
+              'error' => $e->getMessage()
+          ], 400);
+      }
+  
+         }
+  
+
+
+
     public function index(){
        
        
       try{
         $productsPerPage = 8;
-        $product = Product::orderBy('updated_at', 'desc')
+        $product = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')
             ->simplePaginate($productsPerPage);
             $pageCount = count(Product::all()) / $productsPerPage;
 
@@ -51,7 +78,7 @@ class ProductController extends Controller
 
         
         if($request->searchData){
-            $productsPerPage = 3;
+            $productsPerPage = 8;
             $searchProducts=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
             ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
             ->orWhere('category','LIKE','%'.$request->searchData.'%')
@@ -89,6 +116,29 @@ class ProductController extends Controller
             ]);
         }
        }
+
+
+       public function get_total_products()
+    {
+
+    
+        try{
+         
+             $productCount = count(Product::all());
+    
+            return response()->json([
+                'totalProducts' => $productCount,
+                
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.get_total_producs',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
 
        public function AllProducts(){
@@ -133,7 +183,7 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop')->get();       
+            $laptopComputer = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Laptop')->get();       
             $laptopComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($laptopComputer) / $productsPerPage;
@@ -146,19 +196,176 @@ class ProductController extends Controller
     
         catch (\Exception $e) {
             return response()->json([
-                'message' => 'Something went wrong in ProductController.DesktopComputers',
+                'message' => 'Something went wrong in ProductController.LaptopComputers',
                 'error' => $e->getMessage()
             ], 400);
         }
                 
        }
 
+
+       public function HpLaptopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop')->get();       
+            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($laptopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $laptopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.HpLaptopComputers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+
+       public function AppleLaptopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop')->get();       
+            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($laptopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $laptopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.AppleLaptop',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+       public function LenevoLaptopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop')->get();       
+            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($laptopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $laptopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.LenevoLaptop',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+       public function HpDesktopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop')->get();       
+            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($desktopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $desktopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.HpDesktopComputers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+     
+      
+       public function AppleDesktopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop')->get();       
+            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($desktopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $desktopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.AppleDesktopComputers',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+    
+
+
+       public function LenevoDesktopComputers(){
+       
+        try{
+            $productsPerPage = 4;
+            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','LenevoDesktop')->get();       
+            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoDesktop') ->simplePaginate($productsPerPage);
+          
+            $pageCount = count($desktopComputer) / $productsPerPage;
+
+            return response()->json([
+                'products' => $desktopComputersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.LenevoDesktop',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+     
+
+
+     
        public function DesktopComputers(){
        
         try{
             $productsPerPage = 4;
-            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Desktop')->get();       
-            $desktopComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Desktop') ->simplePaginate($productsPerPage);
+            $desktopComputer = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop')->get();       
+            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($desktopComputer) / $productsPerPage;
 
@@ -184,7 +391,7 @@ class ProductController extends Controller
         try{
             $productsPerPage = 4;
             $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Iphone')->get();       
-            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Iphone') ->simplePaginate($productsPerPage);
+            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Iphone') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -207,7 +414,7 @@ class ProductController extends Controller
         try{
             $productsPerPage = 4;
             $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Android')->get();       
-            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Android') ->simplePaginate($productsPerPage);
+            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Android') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -231,7 +438,7 @@ class ProductController extends Controller
         try{
             $productsPerPage = 4;
             $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Button')->get();       
-            $mobileComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Button') ->simplePaginate($productsPerPage);
+            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Button') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -420,27 +627,41 @@ class ProductController extends Controller
     //          ], 400);
     //      }
     //  }
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $user=User::first();
-        $product=Product::create([
-            'name'=>$request['name'],
-            'category'=>$request['category'],
-            'subcategory'=>$request['subcategory'],
-            'subcategory1'=>$request['subcategory1'],
-            'slug'=>$request['slug'],
-            'description'=>$request['description'],
-            'image_name'=>$request['image_name'],
-            'price'=>$request['price'],
-            'sale_price'=>$request['sale_price']
-            
+        // $user=User::first();
+        try{
+            $product=Product::create([
+                'name'=>$request['name'],
+                'category'=>$request['category'],
+                'subcategory'=>$request['subcategory'],
+                'subcategory1'=>$request['subcategory1'],
+                'slug'=>$request['slug'],
+                'description'=>$request['description'],
+                'image_name'=>$request['image_name'],
+                'price'=>$request['price'],
+                'sale_price'=>$request['sale_price'],
+                'productquantity'=>$request['productquantity']
+                
+               
+                
+            ]);
+            if($product){
+            return response()->json([
+                'success'=> 'true',
+                'product'=>$product
+            ]);
+          }
+            // Notification::send($user,new ProductNotification($request->name));
            
-            
-        ]);
-        Notification::send($user,new ProductNotification($request->name));
-        return response([
-            'product'=>$product,
-        ]);
+        }
+
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.store',
+                'errors' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -463,6 +684,21 @@ class ProductController extends Controller
             ], 400);
         }
     }
+    public function showSingleProduct(int $id)
+    {
+        try {
+            $product = Product::where('id', $id)->get(['productquantity']);
+
+            return response()->json($product, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.showSingleProduct',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+   
 
     /**
      * Show the form for editing the specified resource.
@@ -493,6 +729,10 @@ class ProductController extends Controller
 
             $product->name = $request->name;
             $product->slug = $request->slug;
+            $product->category = $request->category;
+            $product->subcategory = $request->subcategory;
+            $product->subcategory1 = $request->subcategory1;
+            $product->productquantity = $request->productquantity;
             $product->description = $request->description;
             $product->price = $request->price;
             $product->sale_price = $request->sale_price;

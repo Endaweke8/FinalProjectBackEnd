@@ -17,13 +17,24 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         try {
-
+         
+           if($request->input('role')){
+            $user = User::create([
+                'first_name' => $request->input('first_name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'role' => $request->input('role'),
+                'password' => Hash::make($request->input('password'))
+            ]);
+           }else{
             $user = User::create([
                 'first_name' => $request->input('first_name'),
                 'last_name' => $request->input('last_name'),
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password'))
             ]);
+           }
+          
 
             $token = $user->createToken('user_token')->plainTextToken;
             $user=User::first();
@@ -53,7 +64,7 @@ class AuthController extends Controller
                 return response()->json([ 'user' => $user, 'token' => $token ], 200);
             }
 
-            return response()->json([ 'error' => 'Something went wrong in login' ]);
+            return response()->json([ 'errors' => 'Something went wrong in login' ]);
 
         } catch (\Exception $e) {
             return response()->json([

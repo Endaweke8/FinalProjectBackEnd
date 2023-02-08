@@ -13,12 +13,77 @@ class AdminProductController extends Controller
      */
     public function get_all_products()
     {
-        $product=Product::orderBy('id','DESC')->get();
-        return response()->json([
-        'products'=>$product
-         ],200);
+
+        
+
+    
+            try{
+                $productsPerPage = 8;
+                $product = Product::orderBy('updated_at', 'desc')
+                    ->simplePaginate($productsPerPage);
+                    $pageCount = count(Product::all()) / $productsPerPage;
+                return response()->json([
+                    'products' => $product,
+                    'page_count' => ceil($pageCount)
+                ], 200);
+              }
+        
+            catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Something went wrong in AdminProductController.get_all_products',
+                    'error' => $e->getMessage()
+                ], 400);
+            }
+        
+    
+        
+
     }
 
+    public function searchProduct(Request $request){
+
+        
+        if($request->searchData){
+            $productsPerPage = 3;
+            $searchProducts=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
+            ->orWhere('category','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('sale_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('slug','LIKE','%'.$request->searchData.'%')
+            ->get();
+
+            $searchProductsCount=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
+            ->orWhere('category','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('sale_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('slug','LIKE','%'.$request->searchData.'%')
+            ->simplePaginate($productsPerPage);
+
+
+
+
+            $pageCount = count($searchProducts) / $productsPerPage;
+
+
+
+
+            return response()->json([
+                'products' =>  $searchProductsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'error'=>'No search found',
+            ]);
+        }
+       }
+
+    
     /**
      * Show the form for creating a new resource.
      *
