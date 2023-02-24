@@ -25,7 +25,7 @@ class ProductController extends Controller
        
         try{
           
-          $product = Product::orderBy('updated_at', 'desc')->get();
+          $product = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->get();
            
           return response()->json([
               'products' => $product,
@@ -50,9 +50,9 @@ class ProductController extends Controller
        
       try{
         $productsPerPage = 8;
-        $product = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')
+        $product = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')
             ->simplePaginate($productsPerPage);
-            $pageCount = count(Product::all()) / $productsPerPage;
+            $pageCount = count(Product::where('productquantity','>',0)->get()) / $productsPerPage;
 
         return response()->json([
             'products' => $product,
@@ -79,7 +79,7 @@ class ProductController extends Controller
         
         if($request->searchData){
             $productsPerPage = 8;
-            $searchProducts=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            $searchProducts=Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
             ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
             ->orWhere('category','LIKE','%'.$request->searchData.'%')
             ->orWhere('price','LIKE','%'.$request->searchData.'%')
@@ -88,7 +88,7 @@ class ProductController extends Controller
             ->orWhere('slug','LIKE','%'.$request->searchData.'%')
             ->get();
 
-            $searchProductsCount=Product::orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
+            $searchProductsCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('name','LIKE','%'.$request->searchData.'%')
             ->orWhere('subcategory1','LIKE','%'.$request->searchData.'%')
             ->orWhere('category','LIKE','%'.$request->searchData.'%')
             ->orWhere('price','LIKE','%'.$request->searchData.'%')
@@ -155,7 +155,7 @@ class ProductController extends Controller
        
        
        
-        $products=Product::where('category','Electronics')->get();
+        $products=Product::where('productquantity','>',0)->where('category','Electronics')->get();
         return response()->json(
             [
                 'products'=>$products
@@ -183,8 +183,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $laptopComputer = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Laptop')->get();       
-            $laptopComputersCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop') ->simplePaginate($productsPerPage);
+            $laptopComputer = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Laptop')->get();       
+            $laptopComputersCount=where('productquantity','>',0)->Product::orderBy('updated_at', 'desc')->where('subcategory1','Laptop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($laptopComputer) / $productsPerPage;
 
@@ -208,8 +208,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop')->get();       
-            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop') ->simplePaginate($productsPerPage);
+            $laptopComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop')->get();       
+            $laptopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpLaptop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($laptopComputer) / $productsPerPage;
 
@@ -234,8 +234,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop')->get();       
-            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop') ->simplePaginate($productsPerPage);
+            $laptopComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop')->get();       
+            $laptopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleLaptop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($laptopComputer) / $productsPerPage;
 
@@ -258,8 +258,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $laptopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop')->get();       
-            $laptopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop') ->simplePaginate($productsPerPage);
+            $laptopComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop')->get();       
+            $laptopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoLaptop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($laptopComputer) / $productsPerPage;
 
@@ -283,8 +283,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop')->get();       
-            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop') ->simplePaginate($productsPerPage);
+            $desktopComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop')->get();       
+            $desktopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HpDesktop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($desktopComputer) / $productsPerPage;
 
@@ -308,8 +308,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop')->get();       
-            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop') ->simplePaginate($productsPerPage);
+            $desktopComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop')->get();       
+            $desktopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','AppleDesktop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($desktopComputer) / $productsPerPage;
 
@@ -337,7 +337,7 @@ class ProductController extends Controller
         try{
             $productsPerPage = 4;
             $desktopComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','LenevoDesktop')->get();       
-            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoDesktop') ->simplePaginate($productsPerPage);
+            $desktopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','LenevoDesktop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($desktopComputer) / $productsPerPage;
 
@@ -364,8 +364,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $desktopComputer = Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop')->get();       
-            $desktopComputersCount=Product::with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop') ->simplePaginate($productsPerPage);
+            $desktopComputer = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop')->get();       
+            $desktopComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','Desktop') ->simplePaginate($productsPerPage);
           
             $pageCount = count($desktopComputer) / $productsPerPage;
 
@@ -390,8 +390,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Iphone')->get();       
-            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Iphone') ->simplePaginate($productsPerPage);
+            $mobileComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','Iphone')->get();       
+            $mobileComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->where('subcategory1','Iphone') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -413,8 +413,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Android')->get();       
-            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Android') ->simplePaginate($productsPerPage);
+            $mobileComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','Android')->get();       
+            $mobileComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->where('subcategory1','Android') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -437,8 +437,8 @@ class ProductController extends Controller
        
         try{
             $productsPerPage = 4;
-            $mobileComputer = Product::orderBy('updated_at', 'desc')->where('subcategory1','Button')->get();       
-            $mobileComputersCount=Product::with('likes')->with('stars')->where('subcategory1','Button') ->simplePaginate($productsPerPage);
+            $mobileComputer = Product::where('productquantity','>',0)->orderBy('updated_at', 'desc')->where('subcategory1','Button')->get();       
+            $mobileComputersCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->where('subcategory1','Button') ->simplePaginate($productsPerPage);
           
             $pageCount = count($mobileComputer) / $productsPerPage;
 
@@ -543,6 +543,54 @@ class ProductController extends Controller
        }
        
        
+       public function Televisions(){
+       
+        try{
+            $productsPerPage = 4;
+            $televisions = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','FlatTv')->get();       
+            $televisionsCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','FlatTv')->simplePaginate($productsPerPage);
+          
+            $pageCount = count($televisions) / $productsPerPage;
+
+            return response()->json([
+                'products' => $televisionsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.Televisions',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
+
+
+       public function HeadSets(){
+       
+        try{
+            $productsPerPage = 4;
+            $headsets = Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HeadSet')->get();       
+            $headsetsCount=Product::where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->where('subcategory1','HeadSet')->simplePaginate($productsPerPage);
+          
+            $pageCount = count($headsets) / $productsPerPage;
+
+            return response()->json([
+                'products' => $headsetsCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.HeadSets',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+                
+       }
        
        
     //     $products=Product::all();
@@ -745,6 +793,30 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong in ProductController.update',
+                'errors' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function DecreaseProduct(Request $request, int $id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+
+            // if ($request->hasFile('image')) {
+            //     (new ImageService)->updateImage($user, $request, '/images/users/', 'update');
+            // }
+
+            
+            $product->productquantity = $product->productquantity-$request->productquantity;
+           
+            $product->save();
+
+            return response()->json('Product  updated', 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.DecreaseProduct',
                 'errors' => $e->getMessage()
             ], 400);
         }

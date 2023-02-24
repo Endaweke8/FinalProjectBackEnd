@@ -357,6 +357,7 @@ class CartsController extends Controller
       
         //Processing Payment
         
+      try {
         $stripe=Stripe::make(env('STRIPE_KEY'));
       
         $token=$stripe->tokens()->create([
@@ -449,10 +450,37 @@ class CartsController extends Controller
           }
 
         }
-
+      }catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something went wrong in CartController.processPayment',
+            'errors' => $e->getMessage()
+        ], 400);
+    }
        
     }
 
+    
+
+
+
+    public function DestroyCartAterPayment(int $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            Cart::where('user_id',$user->id)->delete();
+            
+
+            return response()->json([
+              'success'=>'Cart deleted Sucessfuly',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in CartsController.ClearCartItems',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
 
     public function clearCartItem(int $id)

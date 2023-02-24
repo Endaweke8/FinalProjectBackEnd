@@ -10,10 +10,14 @@ use App\Http\Controllers\CartsController;
 use App\Http\Controllers\ChapaController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\AskStockController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\StudenttController;
+use App\Http\Controllers\SellStockController;
+use App\Http\Controllers\StockOrderController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderprocessingController;
@@ -41,10 +45,14 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::put('password/{id}', [\App\Http\Controllers\API\UserController::class, 'passwordupdate']);
     Route::get('user/{id}', [\App\Http\Controllers\API\UserController::class, 'showadminuser']);
     Route::delete('customer/{id}', [\App\Http\Controllers\API\UserController::class, 'destroy']);
+    Route::delete('message/{id}', [\App\Http\Controllers\MessageController::class, 'destroy']);
     Route::delete('order/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'destroy']);
     Route::put('markasdelivered/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'MarkAsDelivered']);
 
     Route::post('/searchuser',[\App\Http\Controllers\UserController::class,'searchUser']);
+    
+    Route::post('/searchmessage',[\App\Http\Controllers\MessageController::class,'searchMessage']);
+
     Route::post('/searchstock',[\App\Http\Controllers\StockController::class,'searchStock']);
 
     Route::post('/searchorder',[\App\Http\Controllers\OrderprocessingController::class,'searchOrder']);
@@ -77,6 +85,14 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::post('logout', [AuthController::class, 'logout']);
 
+    Route::get('/get_all_users',[UserController::class,'get_all_users']);
+Route::get('/get_all_messages',[MessageController::class,'get_all_messages']);
+Route::get('/get_all_products',[AdminProductController::class,'get_all_products']);
+Route::get('/orders',[OrderprocessingController::class,'getOrders']);
+
+
+Route::get('/get_all_stockrequests',[AskStockController::class,'get_all_stockrequests']);
+
  
  });
 
@@ -90,9 +106,14 @@ Route::middleware('auth:sanctum')->group(function(){
 
 Route::post('/saveproduct',[ProductController::class,'store']);
 Route::post('/savestock',[StockController::class,'store']);
+Route::post('/sellstock',[SellStockController::class,'store']);
+Route::post('/askstock',[AskStockController::class,'store']);
+
 Route::post('/getImagePath',[ProductController::class,'getImagePath']);
 Route::post('/upload',[ProductController::class,'uploadpost']);
 
+Route::post('/savemessage',[MessageController::class,'store']);
+Route::post('/savestockorder',[StockOrderController::class,'store']);
 
 Route::get('/products',[ProductController::class,'index']);
 Route::get('/stocks',[StockController::class,'index']);
@@ -111,6 +132,11 @@ Route::get('/products/electronics/hpdesktopcomputers',[ProductController::class,
 Route::get('/products/electronics/appledesktopcomputers',[ProductController::class,'AppleDesktopComputers']);
 Route::get('/products/electronics/lenevodesktopcomputers',[ProductController::class,'LenevoDesktopComputers']);
 
+
+Route::get('/products/electronics/televisions',[ProductController::class,'Televisions']);
+Route::get('/products/electronics/headsets',[ProductController::class,'HeadSets']);
+
+
 Route::get('/products/electronics/desktopcomputers',[ProductController::class,'DesktopComputers']);
 Route::get('/products/electronics/mobiles/iphones',[ProductController::class,'IphoneMobiles']);
 Route::get('/products/electronics/mobiles/androids',[ProductController::class,'AndroidMobiles']);
@@ -127,6 +153,8 @@ Route::get('getsingleproduct/{id}',[ProductController::class,'showSingleProduct'
 Route::get('stock/{id}',[StockController::class,'show']);
 Route::put('stock/{id}', [StockController::class, 'update']);
 Route::put('product/{id}', [ProductController::class, 'update']);
+Route::put('decreaseproduct/{id}', [ProductController::class, 'DecreaseProduct']);
+
 Route::delete('product/{id}', [ProductController::class, 'destroy']);
 
 Route::post('/search',[ProductController::class,'searchProduct']);
@@ -140,6 +168,8 @@ Route::post('/payment',[CartsController::class,'processPayment']);
 Route::delete('clearCartItem/{id}',[CartsController::class,'clearCartItem']);
 
 Route::delete('cart/{id}', [CartsController::class, 'destroy']);
+
+Route::delete('cartafterpayment/{id}', [CartsController::class, 'DestroyCartAterPayment']);
 // Route::post('/register',[AuthController::class,'register']);
 // Route::post('/login',[AuthController::class,'login']);
 
@@ -149,9 +179,7 @@ Route::get('bookmark/{id}',[BookmarkController::class,'show']);
 Route::delete('bookmarks/{id}',[BookmarkController::class,'ClearBookmarks']);
 Route::delete('bookmark/{id}', [BookmarkController::class, 'destroy']);
 
-Route::get('/get_all_users',[UserController::class,'get_all_users']);
-Route::get('/get_all_products',[AdminProductController::class,'get_all_products']);
-Route::get('/orders',[OrderprocessingController::class,'getOrders']);
+
 
 Route::get('/notifications',[NotificationController::class,'index']);
 Route::put('/notification/{id}', [NotificationController::class, 'update']);
