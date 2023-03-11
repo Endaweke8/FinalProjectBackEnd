@@ -19,7 +19,7 @@ class StockController extends Controller
        
        
         try{
-          $stocksPerPage = 8;
+          $stocksPerPage = 12;
           $stock = Stock::orderBy('updated_at', 'desc')
               ->simplePaginate($stocksPerPage);
               $pageCount = count(Stock::all()) / $stocksPerPage;
@@ -41,6 +41,31 @@ class StockController extends Controller
   
        
   
+         }
+
+
+
+
+         public function get_total_stocks()
+         {
+     
+         
+             try{
+              
+                  $stockCount = count(Stock::all());
+         
+                 return response()->json([
+                     'totalStocks' => $stockCount,
+                     
+                 ], 200);
+               }
+         
+             catch (\Exception $e) {
+                 return response()->json([
+                     'message' => 'Something went wrong in ProductController.get_total_producs',
+                     'error' => $e->getMessage()
+                 ], 400);
+             }
          }
 
     /**

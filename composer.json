@@ -9,6 +9,7 @@
         "cartalyst/stripe-laravel": "^14.0",
         "chapa/chapa-laravel": "dev-main",
         "guzzlehttp/guzzle": "^7.2",
+        "ichtrojan/laravel-otp": "^1.4",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",

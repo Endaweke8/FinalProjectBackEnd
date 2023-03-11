@@ -40,6 +40,35 @@ class AdminProductController extends Controller
 
     }
 
+    public function get_all_soldproducts()
+    {
+
+        
+
+    
+            try{
+                $productsPerPage = 8;
+                $product = Product::where('productquantity','<',1)->orderBy('updated_at', 'desc')
+                    ->simplePaginate($productsPerPage);
+                    $pageCount = count(Product::where('productquantity','<',1)->get()) / $productsPerPage;
+                return response()->json([
+                    'products' => $product,
+                    'page_count' => ceil($pageCount)
+                ], 200);
+              }
+        
+            catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Something went wrong in AdminProductController.get_all_products',
+                    'error' => $e->getMessage()
+                ], 400);
+            }
+        
+    
+        
+
+    }
+
     public function searchProduct(Request $request){
 
         

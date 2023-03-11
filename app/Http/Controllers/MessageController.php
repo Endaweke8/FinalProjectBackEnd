@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Requests\MessageRequest;
 
 class MessageController extends Controller
@@ -58,6 +59,64 @@ class MessageController extends Controller
     }
 
 
+    
+    public function get_all_todaysmessagesreport()
+    {
+
+    
+        try{
+            $date = Carbon::today()->subDays(1);
+            $messagesPerPage = 8;
+            $message = Message::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->simplePaginate($messagesPerPage);
+                $pageCount = count(Message::where('updated_at', '>=', $date)->get()) / $messagesPerPage;
+    
+            return response()->json([
+                'messages' => $message,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in MessageConteroller.get_all_messages',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    
+    
+    
+         
+    
+           
+    $user=User::orderBy('id','DESC')->get();
+    return response()->json([
+    'messages'=>$user
+    ],200);
+    }
+
+
+    public function get_total_messages()
+    {
+
+    
+        try{
+         
+             $messageCount = count(Message::all());
+    
+            return response()->json([
+                'totalMessages' => $messageCount,
+                
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.get_total_producs',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 
 
     public function create()

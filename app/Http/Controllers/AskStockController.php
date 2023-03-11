@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AskStock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Requests\AskStockRequest;
 
 class AskStockController extends Controller
@@ -45,6 +46,106 @@ class AskStockController extends Controller
     return response()->json([
     'users'=>$user
     ],200);
+    }
+
+
+
+    public function get_all_stockrequestsdailyreport()
+    {
+
+       try{
+            $date = Carbon::today()->subDays(1);
+            $stockPerPage = 8;
+            $stockrequests = AskStock::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->simplePaginate($stockPerPage);
+
+                $pageCount = count(AskStock::where('updated_at', '>=', $date)->get()) / $stockPerPage;
+    
+            return response()->json([
+                'stockrequests' => $stockrequests,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in StockController.get_all_stockrequestsdailyreport',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    
+    
+    
+         
+    
+           
+    $user=User::orderBy('id','DESC')->get();
+    return response()->json([
+    'users'=>$user
+    ],200);
+    }
+
+
+    
+    public function get_all_stockrequestsweeklyreport()
+    {
+
+       try{
+            $date = Carbon::today()->subDays(7);
+            $stockPerPage = 8;
+            $stockrequests = AskStock::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->simplePaginate($stockPerPage);
+
+                $pageCount = count(AskStock::where('updated_at', '>=', $date)->get()) / $stockPerPage;
+    
+            return response()->json([
+                'stockrequests' => $stockrequests,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in StockController.get_all_stockrequestsdailyreport',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    
+    
+    
+         
+    
+           
+    $user=User::orderBy('id','DESC')->get();
+    return response()->json([
+    'users'=>$user
+    ],200);
+    }
+    
+
+
+
+
+    public function get_total_stockasked()
+    {
+
+    
+        try{
+         
+             $stockAskedCount = count(AskStock::all());
+    
+            return response()->json([
+                'totalStockAsked' => $stockAskedCount,
+                
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in AskStcokController.get_total_stockasked',
+                'error' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -103,7 +204,65 @@ class AskStockController extends Controller
     
     }
 
-    /**
+
+
+
+    public function searchStockRequest(Request $request){
+
+        
+        if($request->searchData){
+            $stocksRequestsPerPage = 8;
+            $searchStocksRequest=AskStock::orderBy('updated_at', 'desc')
+            ->where('firstName','LIKE','%'.$request->searchData.'%')
+            ->orWhere('lastName','LIKE','%'.$request->searchData.'%')
+            ->orWhere('email','LIKE','%'.$request->searchData.'%')
+            ->orWhere('phone','LIKE','%'.$request->searchData.'%')
+            ->where('address','LIKE','%'.$request->searchData.'%')
+            ->orWhere('stockType','LIKE','%'.$request->searchData.'%')
+            ->orWhere('amount','LIKE','%'.$request->searchData.'%')
+            ->orWhere('buying_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('user_id','LIKE','%'.$request->searchData.'%')
+          
+            
+            ->get();
+
+            $searchStocksRequestCount=AskStock::orderBy('updated_at', 'desc')
+            ->where('firstName','LIKE','%'.$request->searchData.'%')
+            ->orWhere('lastName','LIKE','%'.$request->searchData.'%')
+            ->orWhere('email','LIKE','%'.$request->searchData.'%')
+            ->orWhere('phone','LIKE','%'.$request->searchData.'%')
+            ->where('address','LIKE','%'.$request->searchData.'%')
+            ->orWhere('stockType','LIKE','%'.$request->searchData.'%')
+            ->orWhere('amount','LIKE','%'.$request->searchData.'%')
+            ->orWhere('buying_price','LIKE','%'.$request->searchData.'%')
+            ->orWhere('user_id','LIKE','%'.$request->searchData.'%')
+            
+            ->simplePaginate($stocksRequestsPerPage);
+
+
+
+
+            $pageCount = count($searchStocksRequest) / $stocksRequestsPerPage;
+
+
+
+
+            return response()->json([
+                'stockrequests' =>  $searchStocksRequestCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'error'=>'No search found',
+            ]);
+        }
+       }
+
+
+    
+    
+       /**
      * Display the specified resource.
      *
      * @param  \App\Models\AskStock  $askStock
@@ -143,8 +302,19 @@ class AskStockController extends Controller
      * @param  \App\Models\AskStock  $askStock
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AskStock $askStock)
+    public function destroy(int $id)
     {
-        //
+        try {
+            $stockRequest = AskStock::findOrFail($id);
+            $stockRequest->delete();
+
+            return response()->json('StockRequest has been  deleted', 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in AskStockController.destroy',
+                'error' => $e->getMessage()
+            ], 400);
+        }
     }
 }

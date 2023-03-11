@@ -195,6 +195,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Ichtrojan\Otp\OtpServiceProvider::class,
 
     ],
 
@@ -212,6 +213,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'ImageIntervention' => Intervention\Image\Facades\Image::class,
         'Stripe' => Cartalyst\Stripe\Laravel\Facades\Stripe::class,
+        'Otp' => Ichtrojan\Otp\Otp::class,
     ])->toArray(),
 
 ];

@@ -47,6 +47,47 @@ class UserController extends Controller
     }
 
 
+    public function get_all_employees()
+    {
+
+    
+        try{
+            $usersPerPage = 8;
+            $user = User::orderBy('updated_at', 'desc')
+            ->where('role','socialmediamanager')
+            ->orWhere('role','manager')
+            ->orWhere('role','delivery')
+            ->orWhere('role','customerserviceofficor')
+                ->simplePaginate($usersPerPage);
+                $pageCount = count(User::where('role','socialmediamanager')
+                ->orWhere('role','manager')
+                ->orWhere('role','delivery')
+                ->orWhere('role','customerserviceofficor')->get()) / $usersPerPage;
+    
+            return response()->json([
+                'users' => $user,
+                'page_count' => ceil($pageCount)
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in UserController.get_all_employees',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    
+    
+    
+         
+    
+           
+    $user=User::orderBy('id','DESC')->get();
+    return response()->json([
+    'users'=>$user
+    ],200);
+    }
+
 
     public function get_total_users()
     {

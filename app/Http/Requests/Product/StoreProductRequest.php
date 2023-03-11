@@ -28,6 +28,7 @@ class StoreProductRequest extends FormRequest
             'category' => 'required|string|min:1',
             'subcategory' => 'required|string|min:1',
             'subcategory1' => 'required|string|min:1',
+            'buying_price'=> 'required|string|min:1',
             'price'=> 'required|string|min:1',
             'sale_price'=> 'required|string|min:1',
             'productquantity'=> 'required|string|min:1',

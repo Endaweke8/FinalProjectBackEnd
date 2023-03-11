@@ -284,7 +284,6 @@ class CartsController extends Controller
        
       if(isset($cartItems)){
 
-       
         foreach($cartItems as $cartItem){
          if($cartItem->product){
          
@@ -358,7 +357,7 @@ class CartsController extends Controller
         //Processing Payment
         
       try {
-        $stripe=Stripe::make(env('STRIPE_KEY'));
+        $stripe=Stripe::make(env('STRIPE_API_KEY'));
       
         $token=$stripe->tokens()->create([
          'card'=>[

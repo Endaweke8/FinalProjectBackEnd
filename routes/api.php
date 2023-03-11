@@ -5,11 +5,13 @@ use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
 // use App\Http\Controllers\UserController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\ChapaController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\API\AuthController;
@@ -20,7 +22,11 @@ use App\Http\Controllers\SellStockController;
 use App\Http\Controllers\StockOrderController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\API\NewPasswordController;
 use App\Http\Controllers\OrderprocessingController;
+use App\Http\Controllers\API\ResetPasswordController;
+use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\API\ForgotPasswordController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,11 +39,32 @@ use App\Http\Controllers\OrderprocessingController;
 */
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
+Route::post('forget-password',[NewPasswordController::class,'forgetPassword']);
+Route::post('email-verification',[EmailVerificationController::class,'email_verification']);
+Route::post('forget-password',[ForgotPasswordController::class,'ForgetPassword']);
+Route::post('reset-password',[ResetPasswordController::class,'ResetPassword']);
+Route::post('change-password',[ChangePasswordController::class,'ChangePassword']);
+Route::post('testverify',[TestController::class,'please']);
 
 Route::middleware('auth:sanctum')->group(function(){
- 
+
+
     Route::get('/get_total_users',[UserController::class,'get_total_users']);
     Route::get('/get_total_products',[ProductController::class,'get_total_products']);
+    Route::get('/get_total_soldproducts',[ProductController::class,'get_total_soldproducts']);
+
+    Route::get('/get_total_stocks',[StockController::class,'get_total_stocks']);
+    Route::get('/get_total_messages',[MessageController::class,'get_total_messages']);
+    Route::get('/get_total_stockorder',[StockOrderController::class,'get_total_stockorder']);
+    Route::get('/get_total_stockasked',[AskStockController::class,'get_total_stockasked']);
+    Route::get('/get_total_pendingorders',[OrderprocessingController::class,'get_total_pendingorders']);
+    Route::get('/get_total_deliveredorders',[OrderprocessingController::class,'get_total_deliveredorders']);
+    Route::get('/get_total_acceptedorders',[OrderprocessingController::class,'get_total_acceptedorders']);
+    Route::get('/get_total_sellstockrequested',[SellStockController::class,'get_total_sellstockrequested']);
+    Route::get('/get_total_notifiedorders',[OrderprocessingController::class,'get_total_notifiedorders']);
+
+   
+
     Route::get('/get_total_transactions',[\App\Http\Controllers\OrderprocessingController::class,'get_total_transactions']);
     Route::get('/get_total_sales',[\App\Http\Controllers\OrderprocessingController::class,'get_total_sales']);
     Route::get('users/{id}', [\App\Http\Controllers\API\UserController::class, 'show']);
@@ -45,15 +72,27 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::put('password/{id}', [\App\Http\Controllers\API\UserController::class, 'passwordupdate']);
     Route::get('user/{id}', [\App\Http\Controllers\API\UserController::class, 'showadminuser']);
     Route::delete('customer/{id}', [\App\Http\Controllers\API\UserController::class, 'destroy']);
+    Route::delete('stockrequest/{id}', [\App\Http\Controllers\AskStockController::class, 'destroy']);
+
+
     Route::delete('message/{id}', [\App\Http\Controllers\MessageController::class, 'destroy']);
     Route::delete('order/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'destroy']);
     Route::put('markasdelivered/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'MarkAsDelivered']);
+    Route::put('notifydeliveryman/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'NotifyDeliveryMan']);
+    Route::put('notifyasaccepted/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'NotifyAsAccepted']);
+
 
     Route::post('/searchuser',[\App\Http\Controllers\UserController::class,'searchUser']);
     
     Route::post('/searchmessage',[\App\Http\Controllers\MessageController::class,'searchMessage']);
 
     Route::post('/searchstock',[\App\Http\Controllers\StockController::class,'searchStock']);
+
+    Route::post('/searchStockRequests',[\App\Http\Controllers\AskStockController::class,'searchStockRequest']);
+    Route::post('/searchStockOrder',[\App\Http\Controllers\StockOrderController::class,'searchStockOrder']);
+    
+    Route::post('/searchsellStockRequests',[\App\Http\Controllers\SellStockController::class,'searchsellStockRequests']);
+
 
     Route::post('/searchorder',[\App\Http\Controllers\OrderprocessingController::class,'searchOrder']);
     Route::post('/searchorderresponse',[\App\Http\Controllers\OrderprocessingController::class,'searchOrderResponse']);
@@ -86,13 +125,48 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('/get_all_users',[UserController::class,'get_all_users']);
+    Route::get('/get_all_employees',[UserController::class,'get_all_employees']);
 Route::get('/get_all_messages',[MessageController::class,'get_all_messages']);
+Route::get('/get_all_todaysmessagesreport',[MessageController::class,'get_all_todaysmessagesreport']);
+
+
 Route::get('/get_all_products',[AdminProductController::class,'get_all_products']);
+Route::get('/get_all_soldproducts',[AdminProductController::class,'get_all_soldproducts']);
+
+
+Route::get('/getdailyreportorders',[OrderprocessingController::class,'getDailyReportOrders']);
+
+
+
 Route::get('/orders',[OrderprocessingController::class,'getOrders']);
+Route::get('/pendingorders',[OrderprocessingController::class,'getPendingOrders']);
+Route::get('/deliveredorders',[OrderprocessingController::class,'getDeliveredOrders']);
+Route::get('/notifiedorders',[OrderprocessingController::class,'getNotifiedOrders']);
+Route::get('/acceptedorders',[OrderprocessingController::class,'acceptedOrders']);
+Route::get('/getdailyacceptedreportorders',[OrderprocessingController::class,'getDailyAcceptedReportOrders']);
+Route::get('/getdailpendingreportorders',[OrderprocessingController::class,'getDailyPendingReportOrders']);
+Route::get('/getdailydeliveredreportorders',[OrderprocessingController::class,'getDailyDeliveredReportOrders']);
 
 
+Route::get('/getweeklyreportorders',[OrderprocessingController::class,'getWeeklyReportOrders']);
+Route::get('/getweeklydeliveredreportorders',[OrderprocessingController::class,'getWeeklyDeliveredReportOrders']);
+Route::get('/weeklyacceptedreportorders',[OrderprocessingController::class,'getWeeklyAcceptedReportOrders']);
+Route::get('/getweeklypendingreportorders',[OrderprocessingController::class,'getWeeklyPendingReportOrders']);
+
+
+
+Route::get('/get_all_sellstockrequests',[SellStockController::class,'get_all_sellstockrequests']);
 Route::get('/get_all_stockrequests',[AskStockController::class,'get_all_stockrequests']);
+Route::get('/get_all_stockorders',[StockOrderController::class,'get_all_stockorders']);
 
+Route::get('/get_all_sellstockrequestsweeklyreport',[SellStockController::class,'get_all_sellstockrequestsweeklyreport']);
+Route::get('/get_all_stockrequestsweeklyreport',[AskStockController::class,'get_all_stockrequestsweeklyreport']);
+
+
+
+Route::get('/get_all_stockordersdailyreport',[StockOrderController::class,'get_all_stockordersdailyreport']);
+Route::get('/get_all_stockrequestsdailyreport',[AskStockController::class,'get_all_stockrequestsdailyreport']);
+Route::get('/get_all_sellstockrequestsdailyreport',[SellStockController::class,'get_all_sellstockrequestsdailyreport']);
  
  });
 
@@ -116,6 +190,7 @@ Route::post('/savemessage',[MessageController::class,'store']);
 Route::post('/savestockorder',[StockOrderController::class,'store']);
 
 Route::get('/products',[ProductController::class,'index']);
+Route::get('/latestproducts',[ProductController::class,'latestproducts']);
 Route::get('/stocks',[StockController::class,'index']);
 Route::get('/forslideproducts',[ProductController::class,'ShowAllProductsForSlide']);
 Route::get('/fromallproducts',[ProductController::class,'AllProducts']);
@@ -196,3 +271,4 @@ Route::get('/add-studnett',[StudenttController::class,'create']);
 Route::post('/pay', [ChapaController::class,'initialize']);
 Route::get('callback/{reference}', [ChapaController::class,'callback']);
 Route::post('/paymentchapatotable',[ChapaController::class,'processPayment']);
+Route::post('/sendemail',[ContactController::class,'send']);
