@@ -47,9 +47,18 @@ class OrderprocessingController extends Controller
             $order = Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('updated_at', '>=', $date)->get()) / $ordersPerPage;
-    
+            $totalDailyProfit=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('profit');
+                 $totalDailySaleAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('amount');
+                    $totalDailyBuyingPrice=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('total_buying_price');
+
             return response()->json([
                 'orders' => $order,
+                'totalProfit' => $totalDailyProfit,
+                'totalDailySaleAmount' => $totalDailySaleAmount,
+                'totalDailyBuyingPrice' => $totalDailyBuyingPrice,
                 'page_count' => ceil($pageCount)
             ], 200);
           }
@@ -75,9 +84,20 @@ class OrderprocessingController extends Controller
             $order = Processing::orderBy('created_at', 'desc')->where('created_at', '>=', $date)
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('created_at', '>=', $date)->get()) / $ordersPerPage;
+
+
+                $totalWeeklyProfit=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('profit');
+                 $totalWeeklySaleAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('amount');
+                    $totalWeeklyBuyingAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)
+                ->sum('total_buying_price');
     
             return response()->json([
                 'orders' => $order,
+                'totalProfit' => $totalWeeklyProfit,
+                'totalWeeklySaleAmount' => $totalWeeklySaleAmount,
+                'totalWeeklyBuyingAmount' => $totalWeeklyBuyingAmount,
                 'page_count' => ceil($pageCount)
             ], 200);
           }
@@ -106,9 +126,19 @@ class OrderprocessingController extends Controller
             $order = Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('accepted','accepted')
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('updated_at', '>=', $date)->where('accepted','accepted')->get()) / $ordersPerPage;
-    
+            
+            $totalDailyAcceptedProfit=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('accepted','accepted')
+                ->sum('profit');
+                 $totalDailyAcceptedSaleAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('accepted','accepted')
+                ->sum('amount');
+                    $totalDailyAcceptedBuyingPrice=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('accepted','accepted')
+                ->sum('total_buying_price');
+
             return response()->json([
                 'orders' => $order,
+                'totalProfit' => $totalDailyAcceptedProfit,
+                'totalDailyAcceptedSaleAmount' => $totalDailyAcceptedSaleAmount,
+                'totalDailyAcceptedBuyingPrice' => $totalDailyAcceptedBuyingPrice,
                 'page_count' => ceil($pageCount)
             ], 200);
           }
@@ -165,9 +195,19 @@ class OrderprocessingController extends Controller
             $order = Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','pending')
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('updated_at', '>=', $date)->where('status','pending')->get()) / $ordersPerPage;
+
+                $totalDailyPendingProfit=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','pending')
+                ->sum('profit');
+                 $totalDailyPendingSaleAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','pending')
+                ->sum('amount');
+                    $totalDailyPendingBuyingPrice=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','pending')
+                ->sum('total_buying_price');
     
             return response()->json([
                 'orders' => $order,
+                'totalDailyPendingProfit' => $totalDailyPendingProfit,
+                'totalDailyPendingSaleAmount' => $totalDailyPendingSaleAmount,
+                'totalDailyPendingBuyingPrice' => $totalDailyPendingBuyingPrice,
                 'page_count' => ceil($pageCount)
             ], 200);
           }
@@ -221,9 +261,20 @@ class OrderprocessingController extends Controller
             $order = Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','delivered')
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('updated_at', '>=', $date)->where('status','delivered')->get()) / $ordersPerPage;
+
+                 $totalDailyDeliveredProfit=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','delivered')
+                ->sum('profit');
+                 $totalDailyDeliveredSaleAmount=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','delivered')
+                ->sum('amount');
+                    $totalDailyDeliveredBuyingPrice=Processing::orderBy('updated_at', 'desc')->where('updated_at', '>=', $date)->where('status','delivered')
+                ->sum('total_buying_price');
+
     
             return response()->json([
                 'orders' => $order,
+                'totalDailyDeliveredProfit' => $totalDailyDeliveredProfit,
+                'totalDailyDeliveredSaleAmount' => $totalDailyDeliveredSaleAmount,
+                'totalDailyDeliveredBuyingPrice' => $totalDailyDeliveredBuyingPrice,
                 'page_count' => ceil($pageCount)
             ], 200);
           }
@@ -736,6 +787,24 @@ class OrderprocessingController extends Controller
     }  catch (\Exception $e) {
         return response()->json([
             'message' => 'Something went wrong in OrderProcessing.show',
+            'error' => $e->getMessage()
+        ], 400);
+    }
+    }
+
+
+    public function showOrderResponseDetail(int $id)
+    {
+        try {
+            $processing=Processing::find($id);
+
+           return response()->json([
+              
+              'orderResponse'=>$processing,
+          ], 200);
+    }  catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something went wrong in OrderProcessing.showOrderResponseDetail',
             'error' => $e->getMessage()
         ], 400);
     }

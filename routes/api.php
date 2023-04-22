@@ -9,19 +9,25 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\ChapaController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\AskStockController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\StudenttController;
 use App\Http\Controllers\SellStockController;
 use App\Http\Controllers\StockOrderController;
+use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ClientAddressController;
+use App\Http\Controllers\ProductFeatureController;
 use App\Http\Controllers\API\NewPasswordController;
 use App\Http\Controllers\OrderprocessingController;
 use App\Http\Controllers\API\ResetPasswordController;
@@ -72,8 +78,12 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::put('password/{id}', [\App\Http\Controllers\API\UserController::class, 'passwordupdate']);
     Route::get('user/{id}', [\App\Http\Controllers\API\UserController::class, 'showadminuser']);
     Route::delete('customer/{id}', [\App\Http\Controllers\API\UserController::class, 'destroy']);
+    Route::delete('category/{id}', [CategoryController::class, 'destroy']);
+    Route::get('getcategory/{id}', [CategoryController::class, 'show']);
+    Route::put('editcategory/{id}', [CategoryController::class, 'update']);
+    Route::put('make_category_active/{id}', [CategoryController::class, 'Active']);
     Route::delete('stockrequest/{id}', [\App\Http\Controllers\AskStockController::class, 'destroy']);
-
+    
 
     Route::delete('message/{id}', [\App\Http\Controllers\MessageController::class, 'destroy']);
     Route::delete('order/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'destroy']);
@@ -125,6 +135,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('/get_all_users',[UserController::class,'get_all_users']);
+    Route::get('/get_all_categories',[CategoryController::class,'get_all_categories']);
     Route::get('/get_all_employees',[UserController::class,'get_all_employees']);
 Route::get('/get_all_messages',[MessageController::class,'get_all_messages']);
 Route::get('/get_all_todaysmessagesreport',[MessageController::class,'get_all_todaysmessagesreport']);
@@ -179,11 +190,16 @@ Route::get('/get_all_sellstockrequestsdailyreport',[SellStockController::class,'
 // });
 
 Route::post('/saveproduct',[ProductController::class,'store']);
+Route::post('/saveimage',[ImageController::class,'store']);
 Route::post('/savestock',[StockController::class,'store']);
 Route::post('/sellstock',[SellStockController::class,'store']);
 Route::post('/askstock',[AskStockController::class,'store']);
 
 Route::post('/getImagePath',[ProductController::class,'getImagePath']);
+Route::post('/getstockimagepath',[StockController::class,'getStockImagePath']);
+
+Route::post('/getvideopath',[ProductController::class,'getVideoPath']);
+Route::post('/getImagePathMore',[ImageController::class,'getImagePathMore']);
 Route::post('/upload',[ProductController::class,'uploadpost']);
 
 Route::post('/savemessage',[MessageController::class,'store']);
@@ -224,6 +240,8 @@ Route::get('/products/clothes/mens/tshirts',[ProductController::class,'MensTshir
 Route::get('/products/clothes/mens/jackets',[ProductController::class,'MensJackets']);
 Route::get('/products/clothes',[ProductController::class,'Clothes']);
 Route::get('product/{id}',[ProductController::class,'show']);
+Route::get('category/{id}',[ProductController::class,'getCategory']);
+
 Route::get('getsingleproduct/{id}',[ProductController::class,'showSingleProduct']);
 Route::get('stock/{id}',[StockController::class,'show']);
 Route::put('stock/{id}', [StockController::class, 'update']);
@@ -272,3 +290,35 @@ Route::post('/pay', [ChapaController::class,'initialize']);
 Route::get('callback/{reference}', [ChapaController::class,'callback']);
 Route::post('/paymentchapatotable',[ChapaController::class,'processPayment']);
 Route::post('/sendemail',[ContactController::class,'send']);
+
+
+Route::post('/addcategory',[CategoryController::class,'store']);
+Route::get('/getcategories',[CategoryController::class,'index']);
+Route::get('/getactivecategories',[CategoryController::class,'ActiveCategory']);
+
+Route::post('/addsubcategory',[SubCategoryController::class,'store']);
+
+Route::get('getdetailorderresponse/{id}',[OrderprocessingController::class,'showOrderResponseDetail']);
+
+Route::get('getrelatedproducts/{id}',[ProductController::class,'getRelatedProducts']);
+Route::post('/sendcomment',[CommentController::class,'store']);
+
+Route::get('getcommentimages/{id}', [CommentController::class, 'show']);
+Route::put('editusercomment/{id}', [CommentController::class, 'update']);
+
+Route::get('getcommentusername/{id}', [CommentController::class, 'showName']);
+Route::delete('comment/{id}',[CommentController::class,'destroy']);
+
+Route::delete('removefrommoreproductimage/{id}',[ImageController::class,'destroy']);
+
+Route::put('editmoreproductimage/{id}', [ImageController::class, 'update']);
+Route::post('/saveaddress',[ClientAddressController::class,'store']);
+Route::get('clientaddressbyid/{id}',[ClientAddressController::class,'show']);
+Route::put('updateaddress/{id}', [ClientAddressController::class, 'update']);
+
+Route::post('/addproductfeature',[ProductFeatureController::class,'store']);
+Route::get('getproductfeature/{id}', [ProductFeatureController::class, 'show']);
+Route::put('updateproductfeature/{id}', [ProductFeatureController::class, 'update']);
+Route::delete('removeproductfeature/{id}', [ProductFeatureController::class, 'destroy']);
+
+

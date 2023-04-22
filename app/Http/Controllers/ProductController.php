@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Services\ImageService;
+use Intervention\Image\Facades\Image;
 use App\Notifications\ProductNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Product\StoreProductRequest;
@@ -69,11 +70,81 @@ class ProductController extends Controller
         ], 400);
     }
 
+    
+
 
 
      
 
        }
+
+
+       public function getRelatedProducts(int $id)
+     {
+
+
+        try{
+            $product = Product::findOrFail($id);
+            $categoryId=$product->category_id;
+            $subcategory1=$product->subcategory1;
+
+            // return response()->json([
+            //     'related product category id' => $categoryId,
+               
+            // ], 200);
+
+            $relatedProducts = Product::where('productquantity','>',0)->where('subcategory1',$subcategory1)->where('id','!=',$product->id)->with('likes')->with('stars')->orderBy('updated_at', 'desc')->get();
+             
+            return response()->json([
+                 'relatedproducts' => $relatedProducts,
+               
+            ], 200);
+          }
+    
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.getRelatedController',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    
+           
+     }
+
+
+
+
+
+    public function getCategory(int $id){
+       
+       
+        try{
+        //   $date = Carbon::today()->subDays(1);
+          $productsPerPage = 20;
+          $product = Product::where('category_id', '=', $id)->where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')
+              ->simplePaginate($productsPerPage);
+              $pageCount = count(Product::where('category_id', '=', $id)->where('productquantity','>',0)->get()) / $productsPerPage;
+  
+          return response()->json([
+              'products' => $product,
+              'page_count' => ceil($pageCount)
+          ], 200);
+        }
+  
+      catch (\Exception $e) {
+          return response()->json([
+              'message' => 'Something went wrong in ProductController.getCategory',
+              'error' => $e->getMessage()
+          ], 400);
+      }
+  
+      
+  
+  
+  
+       
+  
+         }
 
 
 
@@ -204,7 +275,7 @@ class ProductController extends Controller
 
 
        public function AllProducts(){
-          $products=Product::with('likes')->with('stars')->get();
+          $products=Product::with('likes')->with('stars')->with('images')->with('comments')->with('product_feature')->get();
         return response()->json(
             [
                 'products'=>$products
@@ -544,66 +615,6 @@ class ProductController extends Controller
        }
 
 
-       public function MensTshirts(){
-       
-        try{
-            $productsPerPage = 4;
-            $menTshirt = Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTshirt')->get();       
-            $menTshirtsCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','MenTshirt') ->simplePaginate($productsPerPage);
-          
-            $pageCount = count($menTshirt) / $productsPerPage;
-
-            return response()->json([
-                'products' => $menTshirtsCount,
-                'page_count' => ceil($pageCount)
-            ], 200);
-          }
-    
-        catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong in ProductController.MenTshirts',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-                
-       }
-
-       public function MensJackets(){
-       
-        try{
-            $productsPerPage = 4;
-            $menJacket = Product::orderBy('updated_at', 'desc')->where('subcategory1','MenJacket')->get();       
-            $menJacketsCount=Product::orderBy('updated_at', 'desc')->where('subcategory1','MenJacket') ->simplePaginate($productsPerPage);
-          
-            $pageCount = count($menJacket) / $productsPerPage;
-
-            return response()->json([
-                'products' => $menJacketsCount,
-                'page_count' => ceil($pageCount)
-            ], 200);
-          }
-    
-        catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong in ProductController.MenTshirts',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-                
-       }
-
-       public function Clothes(){
-       
-       
-       
-        $products=Product::where('category','Clothes')->get();
-        return response()->json(
-            [
-                'products'=>$products
-            ],200
-        );
-       }
-       
        
        public function Televisions(){
        
@@ -661,34 +672,38 @@ class ProductController extends Controller
 
 
        public function getImagePath(Request $request){
-        $image=$request->file('image');
-        $new_name=rand().'.'.$image->getClientOriginalExtension();
-        $image->move(public_path('images'),$new_name);
-        $path=asset('images/').'/'.$new_name;
+        if($request->hasFile('image')){
+            // return response()->json(["rsponse"=>true]);
+            $file=$request->file('image');
+            $extension=$file->getClientOriginalExtension();
+            $filename=time().'.'.$extension;
 
-      return $path;
+            $file->move('images/productprofiles',$filename);
+             return $filename;
+        }
+        else{
+            return false;
+        }
+      
 
        }
 
-       public function uploadpost(Request $request){
-        $student=Student::create($request->all());
 
+       public function getVideoPath(Request $request){
+        if($request->hasFile('video')){
+            // return response()->json(["rsponse"=>true]);
+            $file=$request->file('video');
+            $extension=$file->getClientOriginalExtension();
+            $filename=time().'.'.$extension;
 
-        $student=Student::create([
-            'name'=>$request['name'],
-            'email'=>$request['email'],
-            'image'=>$request['image'],
-           
-            
-
-            
-        ]);
-        return response([
-            'student'=>$student,
-        ]);
-
-        
+            $file->move('videos/productvideos',$filename);
+             return $filename;
+        }
+        else{
+            return false;
+        }
        }
+     
     /**
      * Show the form for creating a new resource.
      *
@@ -752,10 +767,10 @@ class ProductController extends Controller
                 'buying_price'=>$request['buying_price'],
                 'price'=>$request['price'],
                 'sale_price'=>$request['sale_price'],
-                'productquantity'=>$request['productquantity']
-                
-               
-                
+                'productquantity'=>$request['productquantity'], 
+                'category_id'=>$request['category_id'],
+                'videopath'=>$request['videopath'] 
+
             ]);
             if($product){
             return response()->json([
@@ -784,9 +799,9 @@ class ProductController extends Controller
     public function show(int $id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::where('id',$id)->with('images')->with('product_feature')->first();
 
-            return response()->json($product, 200);
+            return response()->json(["editproduct"=>$product], 200);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -831,8 +846,66 @@ class ProductController extends Controller
      */
     public function update(Request $request, int $id)
     {
+
+       
         try {
             $product = Product::findOrFail($id);
+           
+            if($request->image_name){
+               
+                if($product->image_name){
+
+                    if (file_exists('images/productprofiles/'. $product->image_name)){
+                        unlink('images/productprofiles/'. $product->image_name);
+                    }
+                 
+                  else{
+                    $image_name=$request->image_name; 
+                  }
+                  
+                }
+
+                $image_name=$request->image_name;
+                // $image_name = time() . '.' . explode('/', explode(':', substr($request->image_name, 0, strpos($request->image_name, ';')))[1])[1];
+
+                // $jpg = (string) Image::make($image_name)->encode('jpg', 75);
+                
+                // Image::make($request->image_name->getRealPath())->save(public_path('images/productprofiles/' . $image_name));
+               
+    
+            }else{
+                
+                $image_name=$product->image_name;
+            }
+
+
+            if($request->videopath){
+
+               
+                if($product->videopath){
+
+                    if (file_exists('videos/productvideos/'. $product->vidoepath)){
+                        unlink('videos/productvideos/'. $product->videopath);
+                    }
+                 
+                  else{
+                    $videopath=$request->videopath; 
+                  }
+                  
+                }
+
+                $videopath=$request->videopath;
+                // $image_name = time() . '.' . explode('/', explode(':', substr($request->image_name, 0, strpos($request->image_name, ';')))[1])[1];
+
+                // $jpg = (string) Image::make($image_name)->encode('jpg', 75);
+                
+                // Image::make($request->image_name->getRealPath())->save(public_path('images/productprofiles/' . $image_name));
+               
+    
+            }else{
+                
+                $videopath=$product->videopath;
+            }
 
             // if ($request->hasFile('image')) {
             //     (new ImageService)->updateImage($user, $request, '/images/users/', 'update');
@@ -841,6 +914,7 @@ class ProductController extends Controller
             $product->name = $request->name;
             $product->slug = $request->slug;
             $product->category = $request->category;
+            $product->category_id = $request->category_id;
             $product->subcategory = $request->subcategory;
             $product->subcategory1 = $request->subcategory1;
             $product->productquantity = $request->productquantity;
@@ -848,8 +922,8 @@ class ProductController extends Controller
             $product->buying_price = $request->buying_price;
             $product->price = $request->price;
             $product->sale_price = $request->sale_price;
-            $product->image_name = $request->image_name;
-
+            $product->image_name =$image_name;
+            $product->videopath =$videopath;
             $product->save();
 
             return response()->json('Product  updated', 200);

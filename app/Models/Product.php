@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Image;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -21,7 +23,9 @@ class Product extends Model
         'sale_price',
         'productquantity',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'category_id',
+        'videopath'
         
     ];
 
@@ -32,6 +36,19 @@ class Product extends Model
 
     public function stars(){
         return $this->hasMany('App\Models\Rating');
+    }
+
+    public function images(){
+        return $this->hasMany(Image::class);
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class)->orderBy('created_at','desc');;
+    }
+
+
+    public function product_feature(){
+        return $this->hasMany(ProductFeature::class)->orderBy('created_at','desc');;
     }
 
 }

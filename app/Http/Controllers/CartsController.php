@@ -75,6 +75,7 @@ class CartsController extends Controller
             'product_id'=>$product->id,
             'quantity'=>1,
             'price'=>$product->sale_price,
+            'buying_price'=>$product->buying_price,
             'user_id'=>$user->id,
           ]);
 
@@ -169,6 +170,7 @@ class CartsController extends Controller
        $cartItems=Cart::with('product')->where('user_id',$user->id)->get();
        $finalData=[];
        $amount=0;
+       $totalBuyingPrice=0;
        
       if(isset($cartItems)){
 
@@ -186,8 +188,11 @@ class CartsController extends Controller
             $finalData[$cartItem->product_id]['quantity']=$cartItem->quantity;
             $finalData[$cartItem->product_id]['sale_price']=$cartItem->price;
             $finalData[$cartItem->product_id]['total']=$cartItem->price*$cartItem->quantity;
+            $finalData[$cartItem->product_id]['totalbuyingprice']=$cartItem->buying_price*$cartItem->quantity;
             $amount+=$cartItem->price*$cartItem->quantity;
+            $totalBuyingPrice+=$cartItem->buying_price*$cartItem->quantity;
             $finalData['totalAmount']=$amount;
+            $finalData['totalBuyingPrice']=$totalBuyingPrice;
 
           }
          
@@ -281,6 +286,7 @@ class CartsController extends Controller
       $cartItems=Cart::with('product')->where('user_id',$user->id)->get();
        $finalData=[];
        $amount=0;
+        $totalBuyingPrice=0;
        
       if(isset($cartItems)){
 
@@ -297,9 +303,11 @@ class CartsController extends Controller
             $finalData[$cartItem->product_id]['quantity']=$cartItem->quantity;
             $finalData[$cartItem->product_id]['sale_price']=$cartItem->price;
             $finalData[$cartItem->product_id]['total']=$cartItem->price*$cartItem->quantity;
-            $amount+=$cartItem->price*$cartItem->quantity;
+            $finalData[$cartItem->product_id]['totalbuyingprice']=$cartItem->buying_price*$cartItem->quantity;
+            $amount+=$cartItem->price*$cartItem->quantity;       
+            $totalBuyingPrice+=$cartItem->buying_price*$cartItem->quantity;
             $finalData['totalAmount']=$amount;
-
+            $finalData['totalBuyingPrice']=$totalBuyingPrice;
           }
          
           }
@@ -339,8 +347,10 @@ class CartsController extends Controller
         $expirationYear=$request->get('expirationYear');
         $state=$request->get('state');
         $amount=$request->get('amount');
+        $total_buying_price=$request->get('total_bying_price');
         $orders=$request->get('order');
 
+      
       //   $ordersArray=[];
 
       // foreach($orders as $order){
@@ -414,7 +424,7 @@ class CartsController extends Controller
           $amountRec=$charge['amount'];
           
 
-      $processingDetails= Processing::create([
+         $processingDetails= Processing::create([
                  'client_id'=>$user->id,
                  'client_name'=>$firstName.'   '.$lastName,
                  'client_address'=>json_encode([
@@ -425,8 +435,13 @@ class CartsController extends Controller
                                     'country'=>$country,
                  ]),
                  'order_details'=>json_encode($orders),
+                 'shipping_birr'=>$request->shipping_birr,
                  'amount'=>$amount,
-                 'currency'=>$charge['currency'],
+                 'total_buying_price'=>$request->total_buying_price,
+                 'profit'=>$amount-$request->total_buying_price,
+                 'payment_method'=>$request->payment_method,
+                 'card_no'=>$request->card_no,
+                 'currency'=>'birr',
           ]);
 
           if($processingDetails){

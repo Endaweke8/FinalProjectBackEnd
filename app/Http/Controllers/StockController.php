@@ -78,6 +78,26 @@ class StockController extends Controller
         //
     }
 
+
+
+    public function getStockImagePath(Request $request){
+        if($request->hasFile('image')){
+            // return response()->json(["rsponse"=>true]);
+            $file=$request->file('image');
+            $extension=$file->getClientOriginalExtension();
+            $filename=time().'.'.$extension;
+
+            $file->move('images/stockprofiles',$filename);
+             return $filename;
+        }
+        else{
+            return false;
+        }
+      
+
+       }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -127,16 +147,39 @@ class StockController extends Controller
         try {
             $stock = Stock::findOrFail($id);
 
-            // if ($request->hasFile('image')) {
-            //     (new ImageService)->updateImage($user, $request, '/images/users/', 'update');
-            // }
+            if($request->image_name){
+               
+                if($stock->image_name){
+
+                    if (file_exists('images/stockprofiles/'. $stock->image_name)){
+                        unlink('images/stockprofiles/'. $stock->image_name);
+                    }
+                 
+                  else{
+                    $image_name=$request->image_name; 
+                  }
+                  
+                }
+
+                $image_name=$request->image_name;
+                // $image_name = time() . '.' . explode('/', explode(':', substr($request->image_name, 0, strpos($request->image_name, ';')))[1])[1];
+
+                // $jpg = (string) Image::make($image_name)->encode('jpg', 75);
+                
+                // Image::make($request->image_name->getRealPath())->save(public_path('images/productprofiles/' . $image_name));
+               
+    
+            }else{
+                
+                $image_name=$stock->image_name;
+            }
 
             $stock->name = $request->name;
             $stock->slug = $request->slug;
             $stock->description = $request->description;
             $stock->amount = $request->amount;
             $stock->sale_price = $request->sale_price;
-            $stock->image_name = $request->image_name;
+            $stock->image_name = $image_name;
 
             $stock->save();
 

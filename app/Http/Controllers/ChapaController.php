@@ -89,7 +89,6 @@ class ChapaController extends Controller
 
 
     public function processPayment(Request $request){
-    
         try {
         $user=User::where('id', $request->get('user_id'))->first();
         $firstName=$request->get('firstName');
@@ -108,6 +107,7 @@ class ChapaController extends Controller
         $state=$request->get('state');
         $amount=$request->get('amount');
         $orders=$request->get('order');
+        $shipping_birr=$request->get('shipping_birr');
 
         $processingDetails= Processing::create([
                  'client_id'=>$user->id,
@@ -120,7 +120,12 @@ class ChapaController extends Controller
                                     'country'=>$country,
                  ]),
                  'order_details'=>json_encode($orders),
+                 'shipping_birr'=>$shipping_birr,
                  'amount'=>$amount,
+                 'total_buying_price'=>$request->total_buying_price,
+                 'profit'=>$amount-$request->total_buying_price,
+                 'payment_method'=>'chapa',
+                 'card_no'=>$cardNumber,
                  'currency'=>"birr",
           ]);
 
