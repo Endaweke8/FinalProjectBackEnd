@@ -14,8 +14,9 @@ class OrderprocessingController extends Controller
 
     
         try{
+            $date = Carbon::today()->subDays(1);
             $ordersPerPage = 8;
-            $order = Processing::orderBy('updated_at', 'desc')
+            $order = Processing::orderBy('created_at', 'desc')->where('created_at', '<', $date)
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::all()) / $ordersPerPage;
     
@@ -326,8 +327,9 @@ class OrderprocessingController extends Controller
 
     
         try{
+             $date = Carbon::today()->subDays(1);
             $ordersPerPage = 8;
-            $order = Processing::where('status','pending')->orderBy('updated_at', 'desc')
+            $order = Processing::where('status','pending')->where('updated_at', '<', $date)->orderBy('updated_at', 'desc')
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('status','pending')->get()) / $ordersPerPage;
     
@@ -354,8 +356,9 @@ class OrderprocessingController extends Controller
 
     
         try{
+            $date = Carbon::today()->subDays(1);
             $ordersPerPage = 8;
-            $order = Processing::where('status','delivered')->orderBy('updated_at', 'desc')
+            $order = Processing::where('status','delivered')->where('updated_at', '<', $date)->orderBy('updated_at', 'desc')
                 ->simplePaginate($ordersPerPage);
                 $pageCount = count(Processing::where('status','delivered')->get()) / $ordersPerPage;
     
@@ -434,8 +437,9 @@ class OrderprocessingController extends Controller
     public function searchOrder(Request $request){
   
         if($request->searchData){
+             $date = Carbon::today()->subDays(1);
             $ordersPerPage = 8;
-            $searchOrders=Processing::orderBy('updated_at', 'desc')->where('client_name','LIKE','%'.$request->searchData.'%')
+            $searchOrders= Processing::orderBy('created_at', 'desc')->where('created_at', '<', $date)->where('client_name','LIKE','%'.$request->searchData.'%')
             ->orWhere('client_id','LIKE','%'.$request->searchData.'%')
             ->orWhere('client_address','LIKE','%'.$request->searchData.'%')
             ->orWhere('amount','LIKE','%'.$request->searchData.'%')
@@ -463,6 +467,51 @@ class OrderprocessingController extends Controller
 
             return response()->json([
                 'orders' =>  $searchOrdersCount,
+                'page_count' => ceil($pageCount)
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'error'=>'No search found',
+            ]);
+        }
+       }
+
+
+
+         public function searchTodaysOrder(Request $request){
+  
+            if($request->todaysQueryOrder){
+            $date = Carbon::today()->subDays(1);
+            $ordersPerPage = 8;
+            $searchTodaysOrders= Processing::orderBy('created_at', 'desc')->where('created_at', '>=', $date)->where('client_name','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('client_id','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('client_address','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('amount','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('currency','LIKE','%'.$request->todaysQueryOrder.'%')
+           
+          
+            
+            ->get();
+
+            $searchTodaysOrdersCount=Processing::orderBy('updated_at', 'desc')->where('client_name','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('client_id','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('client_address','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('amount','LIKE','%'.$request->todaysQueryOrder.'%')
+            ->orWhere('currency','LIKE','%'.$request->todaysQueryOrder.'%')
+         
+            ->simplePaginate($ordersPerPage);
+
+
+
+
+            $pageCount = count($searchTodaysOrders) / $ordersPerPage;
+
+
+
+
+            return response()->json([
+                'todaysorder' =>  $searchTodaysOrdersCount,
                 'page_count' => ceil($pageCount)
             ], 200);
         }

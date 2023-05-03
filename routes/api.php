@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
 
     Route::post('/searchorder',[\App\Http\Controllers\OrderprocessingController::class,'searchOrder']);
+    Route::post('/todasySearchOrder',[\App\Http\Controllers\OrderprocessingController::class,'searchTodaysOrder']);
     Route::post('/searchorderresponse',[\App\Http\Controllers\OrderprocessingController::class,'searchOrderResponse']);
 
 
@@ -151,6 +152,8 @@ Route::get('/getdailyreportorders',[OrderprocessingController::class,'getDailyRe
 
 Route::get('/orders',[OrderprocessingController::class,'getOrders']);
 Route::get('/pendingorders',[OrderprocessingController::class,'getPendingOrders']);
+
+
 Route::get('/deliveredorders',[OrderprocessingController::class,'getDeliveredOrders']);
 Route::get('/notifiedorders',[OrderprocessingController::class,'getNotifiedOrders']);
 Route::get('/acceptedorders',[OrderprocessingController::class,'acceptedOrders']);
@@ -320,5 +323,6 @@ Route::post('/addproductfeature',[ProductFeatureController::class,'store']);
 Route::get('getproductfeature/{id}', [ProductFeatureController::class, 'show']);
 Route::put('updateproductfeature/{id}', [ProductFeatureController::class, 'update']);
 Route::delete('removeproductfeature/{id}', [ProductFeatureController::class, 'destroy']);
+
 
 
