@@ -69,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/get_total_sellstockrequested',[SellStockController::class,'get_total_sellstockrequested']);
     Route::get('/get_total_notifiedorders',[OrderprocessingController::class,'get_total_notifiedorders']);
 
-   
+
 
     Route::get('/get_total_transactions',[\App\Http\Controllers\OrderprocessingController::class,'get_total_transactions']);
     Route::get('/get_total_sales',[\App\Http\Controllers\OrderprocessingController::class,'get_total_sales']);
@@ -83,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::put('editcategory/{id}', [CategoryController::class, 'update']);
     Route::put('make_category_active/{id}', [CategoryController::class, 'Active']);
     Route::delete('stockrequest/{id}', [\App\Http\Controllers\AskStockController::class, 'destroy']);
-    
+
 
     Route::delete('message/{id}', [\App\Http\Controllers\MessageController::class, 'destroy']);
     Route::delete('order/{id}', [\App\Http\Controllers\OrderprocessingController::class, 'destroy']);
@@ -93,14 +93,14 @@ Route::middleware('auth:sanctum')->group(function(){
 
 
     Route::post('/searchuser',[\App\Http\Controllers\UserController::class,'searchUser']);
-    
+
     Route::post('/searchmessage',[\App\Http\Controllers\MessageController::class,'searchMessage']);
 
     Route::post('/searchstock',[\App\Http\Controllers\StockController::class,'searchStock']);
 
     Route::post('/searchStockRequests',[\App\Http\Controllers\AskStockController::class,'searchStockRequest']);
     Route::post('/searchStockOrder',[\App\Http\Controllers\StockOrderController::class,'searchStockOrder']);
-    
+
     Route::post('/searchsellStockRequests',[\App\Http\Controllers\SellStockController::class,'searchsellStockRequests']);
 
 
@@ -113,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::post('songs', [\App\Http\Controllers\API\SongController::class, 'store']);
     Route::delete('songs/{id}/{user_id}', [\App\Http\Controllers\API\SongController::class, 'destroy']);
-    
+
 
     Route::get('youtube/{user_id}', [\App\Http\Controllers\API\YoutubeController::class, 'show']);
     Route::post('youtube', [\App\Http\Controllers\API\YoutubeController::class, 'store']);
@@ -181,7 +181,7 @@ Route::get('/get_all_stockrequestsweeklyreport',[AskStockController::class,'get_
 Route::get('/get_all_stockordersdailyreport',[StockOrderController::class,'get_all_stockordersdailyreport']);
 Route::get('/get_all_stockrequestsdailyreport',[AskStockController::class,'get_all_stockrequestsdailyreport']);
 Route::get('/get_all_sellstockrequestsdailyreport',[SellStockController::class,'get_all_sellstockrequestsdailyreport']);
- 
+
  });
 
 
@@ -209,6 +209,11 @@ Route::post('/savemessage',[MessageController::class,'store']);
 Route::post('/savestockorder',[StockOrderController::class,'store']);
 
 Route::get('/products',[ProductController::class,'index']);
+// Route::get('/products', function (Request $request) {
+//     $products = Product::all();
+//     return response()->json($products);
+// });
+
 Route::get('/latestproducts',[ProductController::class,'latestproducts']);
 Route::get('/stocks',[StockController::class,'index']);
 Route::get('/forslideproducts',[ProductController::class,'ShowAllProductsForSlide']);
