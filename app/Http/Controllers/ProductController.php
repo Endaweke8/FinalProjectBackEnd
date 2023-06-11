@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Cart;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Student;
@@ -59,7 +60,8 @@ class ProductController extends Controller
 
         return response()->json([
             'products' => $product,
-            'page_count' => ceil($pageCount)
+            'page_count' => ceil($pageCount),
+           
         ], 200);
       }
 
@@ -156,13 +158,14 @@ class ProductController extends Controller
             $date = Carbon::today()->subDays(1);
         // $blood = addBloodModel::where('created_at', '<=', $date)->get();
           $productsPerPage = 20;
-          $product = Product::where('updated_at', '>=', $date)->where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')
+          $product = Product::where('created_at', '>=', $date)->where('productquantity','>',0)->with('likes')->with('stars')->orderBy('updated_at', 'desc')
               ->simplePaginate($productsPerPage);
               $pageCount = count(Product::where('updated_at', '>=', $date)->where('productquantity','>',0)->get()) / $productsPerPage;
-  
+
           return response()->json([
               'products' => $product,
-              'page_count' => ceil($pageCount)
+              'page_count' => ceil($pageCount),
+            
           ], 200);
         }
   
@@ -174,10 +177,39 @@ class ProductController extends Controller
       }
   
   
-  
+     
        
   
          }
+
+
+         public function topsoldproducts(){
+       
+       
+            try{
+                // $date = Carbon::today()->subDays(1);
+            // $blood = addBloodModel::where('created_at', '<=', $date)->get();
+            // $topSoldProducts = Product::orderBy('sold_quantity','DESC')->limit(10)->get();
+
+            
+              $product =Product::orderBy('sold_quantity','DESC')->where('productquantity','>',0)->where("sold_quantity", ">",0)->with('likes')->with('stars')->limit(10)
+                  ->get();
+                  
+    
+              return response()->json([
+                  'products' => $product,
+                 
+                 
+              ], 200);
+            }
+      
+          catch (\Exception $e) {
+              return response()->json([
+                  'message' => 'Something went wrong in ProductController.index',
+                  'error' => $e->getMessage()
+              ], 400);
+          }
+        }
   
 
 
@@ -947,6 +979,7 @@ class ProductController extends Controller
 
             
             $product->productquantity = $product->productquantity-$request->productquantity;
+            $product->sold_quantity = $product->sold_quantity+$request->productquantity;
            
             $product->save();
 
@@ -955,6 +988,39 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong in ProductController.DecreaseProduct',
+                'errors' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function CheckoutForPayment(Request $request, int $id)
+    {
+        try {
+           
+            $product = Product::findOrFail($id);
+            $cart=Cart::where('product_id',$id)->first();
+           
+            // if ($request->hasFile('image')) {
+            //     (new ImageService)->updateImage($user, $request, '/images/users/', 'update');
+            // }
+             $result= $product->productquantity-$cart->quantity;
+             if($result<0){
+               $cart->quantity=$product->productquantity;
+             }
+            
+            // $product->productquantity = $product->productquantity-$request->productquantity;
+            // $product->sold_quantity = $product->sold_quantity+$request->productquantity;
+           
+            $cart->save();
+
+            return response()->json([
+                "carttt"=>$cart,
+                // "result"=>$result,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong in ProductController.CheckoutForPayment',
                 'errors' => $e->getMessage()
             ], 400);
         }

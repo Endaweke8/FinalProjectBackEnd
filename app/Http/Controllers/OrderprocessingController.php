@@ -796,6 +796,7 @@ class OrderprocessingController extends Controller
             $userid=$request->userid;
             $processing = Processing::findOrFail($id);
             $processing->accepted = $request->accepted;
+            $processing->status = "delivered";
             $processing->save();
 
 

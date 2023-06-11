@@ -210,6 +210,7 @@ Route::post('/savestockorder',[StockOrderController::class,'store']);
 
 Route::get('/products',[ProductController::class,'index']);
 Route::get('/latestproducts',[ProductController::class,'latestproducts']);
+Route::get('/topsoldproducts',[ProductController::class,'topsoldproducts']);
 Route::get('/stocks',[StockController::class,'index']);
 Route::get('/forslideproducts',[ProductController::class,'ShowAllProductsForSlide']);
 Route::get('/fromallproducts',[ProductController::class,'AllProducts']);
@@ -250,6 +251,8 @@ Route::get('stock/{id}',[StockController::class,'show']);
 Route::put('stock/{id}', [StockController::class, 'update']);
 Route::put('product/{id}', [ProductController::class, 'update']);
 Route::put('decreaseproduct/{id}', [ProductController::class, 'DecreaseProduct']);
+Route::put('checkoutForPayment/{id}', [ProductController::class, 'CheckoutForPayment']);
+
 
 Route::delete('product/{id}', [ProductController::class, 'destroy']);
 
@@ -297,6 +300,7 @@ Route::post('/sendemail',[ContactController::class,'send']);
 
 Route::post('/addcategory',[CategoryController::class,'store']);
 Route::get('/getcategories',[CategoryController::class,'index']);
+Route::get('/getcategoriesbyname',[CategoryController::class,'CategoryByName']);
 Route::get('/getactivecategories',[CategoryController::class,'ActiveCategory']);
 
 Route::post('/addsubcategory',[SubCategoryController::class,'store']);
